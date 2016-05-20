@@ -26,6 +26,12 @@ android {
     }
 }
 
+repositories {
+    maven {
+        url "$rootProject.projectDir/../node_modules/react-native/android"
+    }
+}
+
 dependencies {
     compile fileTree(dir: "libs", include: ["*.jar"])
     compile "com.android.support:appcompat-v7:23.0.1"
