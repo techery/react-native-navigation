@@ -10,7 +10,7 @@ import {
   RctActivity
 } from 'react-native-navigation';
 
-var resolveAssetSource = require('resolveAssetSource');
+var resolveAssetSource = require('react-native/Libraries/Image/resolveAssetSource');
 
 function startSingleScreenApp(params) {
   let screen = params.screen;
