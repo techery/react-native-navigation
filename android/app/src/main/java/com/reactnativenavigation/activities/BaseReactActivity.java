@@ -29,10 +29,11 @@ import com.reactnativenavigation.core.objects.Button;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.packages.RnnPackage;
 import com.reactnativenavigation.utils.ContextProvider;
+import com.reactnativenavigation.utils.ReactPackagesProvider;
 import com.reactnativenavigation.utils.StyleHelper;
 import com.reactnativenavigation.views.RnnToolBar;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -119,10 +120,11 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
      * you'll want to include more packages here.
      */
     public List<ReactPackage> getPackages() {
-        return Arrays.asList(
-                new MainReactPackage(),
-                new RnnPackage()
-        );
+        List<ReactPackage> packagesList = new ArrayList<>();
+        packagesList.add(new MainReactPackage());
+        packagesList.add(new RnnPackage());
+        packagesList.addAll(ReactPackagesProvider.getPackageList());
+        return packagesList;
     }
 
     /**
@@ -217,8 +219,8 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     public void push(Screen screen) {
         setNavigationStyle(screen);
         if (mToolbar != null &&
-            getCurrentNavigatorId().equals(screen.navigatorId) &&
-            getScreenStackSize() >= 1) {
+                getCurrentNavigatorId().equals(screen.navigatorId) &&
+                getScreenStackSize() >= 1) {
             mToolbar.showBackButton(screen);
         }
     }
@@ -226,8 +228,8 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     @CallSuper
     public Screen pop(String navigatorId) {
         if (mToolbar != null &&
-            getCurrentNavigatorId().equals(navigatorId) &&
-            getScreenStackSize() <= 2) {
+                getCurrentNavigatorId().equals(navigatorId) &&
+                getScreenStackSize() <= 2) {
             mToolbar.hideBackButton();
         }
         return null;
@@ -273,7 +275,7 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         if (mReactInstanceManager != null &&
-            mReactInstanceManager.getDevSupportManager().getDevSupportEnabled()) {
+                mReactInstanceManager.getDevSupportManager().getDevSupportEnabled()) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
                 mReactInstanceManager.showDevOptionsDialog();
                 return true;
