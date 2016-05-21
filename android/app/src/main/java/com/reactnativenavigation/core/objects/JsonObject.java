@@ -4,9 +4,6 @@ import android.graphics.Color;
 
 import com.facebook.react.bridge.ReadableMap;
 
-/**
- * Created by guyc on 08/04/16.
- */
 public class JsonObject {
 
     protected String getString(ReadableMap map, String key) {
@@ -19,6 +16,10 @@ public class JsonObject {
 
     protected int getInt(ReadableMap map, String key) {
         return map.hasKey(key) ? map.getInt(key) : -1;
+    }
+
+    protected boolean getBoolean(ReadableMap map, String key) {
+        return map.hasKey(key) && map.getBoolean(key);
     }
 
     protected ReadableMap getMap(ReadableMap map, String key) {

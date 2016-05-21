@@ -4,9 +4,6 @@ import com.reactnativenavigation.activities.BaseReactActivity;
 
 import java.lang.ref.WeakReference;
 
-/**
- * Created by guyc on 10/03/16.
- */
 public class ContextProvider {
     private static WeakReference<BaseReactActivity> sActivityWR;
 

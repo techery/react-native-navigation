@@ -11,9 +11,6 @@ import java.util.Map;
 
 import javax.annotation.Nullable;
 
-/**
- * Helper class for obtaining information about local images.
- */
 public class ResourceDrawableIdHelper {
 
     private Map<String, Integer> mResourceDrawableIdMap;

@@ -25,7 +25,7 @@ public class RootActivity extends BaseReactActivity {
         finish();
     }
 
-     // No need to implement stack interface since this activity is only used to start other
+    // No need to implement stack interface since this activity is only used to start other
     // activities such as TabActivity or SingleScreenActivity.
     @Override
     protected Screen getCurrentScreen() {

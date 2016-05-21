@@ -2,7 +2,9 @@ package com.reactnativenavigation.views;
 
 import android.animation.LayoutTransition;
 import android.content.Context;
+import android.os.Bundle;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.facebook.react.ReactInstanceManager;
@@ -13,8 +15,6 @@ import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.utils.ReflectionUtils;
 
 import java.util.Stack;
-
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 
 public class ScreenStack extends FrameLayout {
 
@@ -53,12 +53,16 @@ public class ScreenStack extends FrameLayout {
     }
 
     public void push(Screen screen, RctView.OnDisplayedListener onDisplayed) {
+        push(screen, onDisplayed, null);
+    }
+
+    public void push(Screen screen, RctView.OnDisplayedListener onDisplayed, Bundle passProps) {
         RctView oldView = null;
         if (!mStack.isEmpty()) {
             oldView = mStack.peek().view;
         }
-        RctView view = new RctView(mReactActivity, mReactInstanceManager, screen, onDisplayed);
-        addView(view, MATCH_PARENT, MATCH_PARENT);
+        RctView view = new RctView(mReactActivity, mReactInstanceManager, screen, onDisplayed, passProps);
+        addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         if (oldView != null) {
             ReactRootView reactRootView = oldView.getReactRootView();
             ReflectionUtils.setBooleanField(reactRootView, "mAttachScheduled", true);

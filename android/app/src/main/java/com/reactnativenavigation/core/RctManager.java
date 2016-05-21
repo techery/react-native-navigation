@@ -13,9 +13,6 @@ import com.reactnativenavigation.core.objects.Screen;
 
 import static com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
 
-/**
- * Created by guyc on 22/02/16.
- */
 public class RctManager {
     private static final String KEY_EVENT_ID = "id";
     private static RctManager sInstance;
@@ -81,9 +78,10 @@ public class RctManager {
 
     /**
      * Sends an event to JavaScript using <a href="https://facebook.github.io/react-native/docs/native-modules-android.html#sending-events-to-javascript">RCTDeviceEventEmitter</a>
+     *
      * @param eventName Name of the event
-     * @param params Event params
-     * @param screen screen which should receive the event
+     * @param params    Event params
+     * @param screen    screen which should receive the event
      */
     public void sendEvent(String eventName, Screen screen, WritableMap params) {
         RCTDeviceEventEmitter eventEmitter = getEventEmitter();

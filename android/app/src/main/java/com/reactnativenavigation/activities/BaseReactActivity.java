@@ -18,20 +18,15 @@ import com.facebook.common.logging.FLog;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactRootView;
-import com.facebook.react.bridge.Arguments;
-import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.common.ReactConstants;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
 import com.reactnativenavigation.BuildConfig;
 import com.reactnativenavigation.core.RctManager;
-import com.reactnativenavigation.core.objects.Button;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.packages.RnnPackage;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.ReactPackagesProvider;
-import com.reactnativenavigation.utils.StyleHelper;
-import com.reactnativenavigation.views.RnnToolBar;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +46,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     protected ReactInstanceManager mReactInstanceManager;
     private boolean mDoRefresh = false;
     private Menu mMenu;
-    protected RnnToolBar mToolbar;
 
     /**
      * Returns the name of the bundle in assets. If this is null, and no file path is specified for
@@ -172,14 +166,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         setContentView(mReactRootView);
     }
 
-    public void setNavigationStyle(Screen screen) {
-        if (mToolbar != null) {
-            mToolbar.setStyle(screen);
-        }
-
-        StyleHelper.setWindowStyle(getWindow(), this, screen);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -217,21 +203,10 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @CallSuper
     public void push(Screen screen) {
-        setNavigationStyle(screen);
-        if (mToolbar != null &&
-                getCurrentNavigatorId().equals(screen.navigatorId) &&
-                getScreenStackSize() >= 1) {
-            mToolbar.showBackButton(screen);
-        }
     }
 
     @CallSuper
     public Screen pop(String navigatorId) {
-        if (mToolbar != null &&
-                getCurrentNavigatorId().equals(navigatorId) &&
-                getScreenStackSize() <= 2) {
-            mToolbar.hideBackButton();
-        }
         return null;
     }
 
@@ -251,12 +226,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-        } else {
-            String eventId = Button.getButtonEventId(item);
-            assert eventId != null;
-
-            WritableMap params = Arguments.createMap();
-            RctManager.getInstance().sendEvent(eventId, getCurrentScreen(), params);
         }
         return super.onOptionsItemSelected(item);
     }

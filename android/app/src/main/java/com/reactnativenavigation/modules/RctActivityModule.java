@@ -19,9 +19,6 @@ import com.reactnativenavigation.utils.ContextProvider;
 
 import java.util.ArrayList;
 
-/**
- * Created by guyc on 10/03/16.
- */
 public class RctActivityModule extends ReactContextBaseJavaModule {
     public static final String REACT_CLASS = "RctActivity";
 
@@ -44,14 +41,14 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
             Bundle extras = new Bundle();
             extras.putSerializable(TabActivity.EXTRA_SCREENS, createScreens(screens));
             intent.putExtras(extras);
-            
+
             context.startActivity(intent);
         }
     }
 
     private ArrayList<Screen> createScreens(ReadableArray screens) {
         ArrayList<Screen> ret = new ArrayList<>();
-        for(int i = 0; i < screens.size(); i++) {
+        for (int i = 0; i < screens.size(); i++) {
             ret.add(new Screen(screens.getMap(i)));
         }
         return ret;
@@ -96,12 +93,12 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
         }
 
         // No Modal is displayed, Push to activity
-         context.runOnUiThread(new Runnable() {
-                 @Override
-                 public void run() {
-                     context.push(screen);
-                 }
-             });
+        context.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                context.push(screen);
+            }
+        });
     }
 
     @ReactMethod
@@ -152,15 +149,15 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
     public void dismissAllModals(final ReadableMap params) {
         final BaseReactActivity context = ContextProvider.getActivityContext();
         if (context != null && !context.isFinishing()) {
-        context.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                ModalController modalController = ModalController.getInstance();
-                if (modalController.isModalDisplayed()) {
-                    modalController.dismissAllModals();
+            context.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ModalController modalController = ModalController.getInstance();
+                    if (modalController.isModalDisplayed()) {
+                        modalController.dismissAllModals();
+                    }
                 }
-            }
-        });
+            });
         }
     }
 
@@ -173,6 +170,19 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
         ModalController modalController = ModalController.getInstance();
         if (modalController.isModalDisplayed()) {
             modalController.dismissModal();
+        }
+    }
+
+    @ReactMethod
+    public void switchTabInPager(final int tabIndex) {
+        final TabActivity activity = (TabActivity) ContextProvider.getActivityContext();
+        if (activity != null && !activity.isFinishing()) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    activity.getViewPager().setCurrentItem(tabIndex, false);
+                }
+            });
         }
     }
 }

@@ -9,9 +9,6 @@ import com.facebook.react.ReactRootView;
 import com.reactnativenavigation.activities.BaseReactActivity;
 import com.reactnativenavigation.core.objects.Screen;
 
-/**
- * Created by guyc on 10/03/16.
- */
 public class RctView extends FrameLayout {
 
     private ReactRootView mReactRootView;
@@ -36,6 +33,12 @@ public class RctView extends FrameLayout {
 
     public RctView(BaseReactActivity ctx, ReactInstanceManager rctInstanceManager, Screen screen,
                    final OnDisplayedListener onDisplayedListener) {
+        this(ctx, rctInstanceManager, screen, onDisplayedListener, null);
+
+    }
+
+    public RctView(BaseReactActivity ctx, ReactInstanceManager rctInstanceManager, Screen screen,
+                   final OnDisplayedListener onDisplayedListener, Bundle passProps) {
         super(ctx);
         setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
@@ -43,14 +46,21 @@ public class RctView extends FrameLayout {
         mReactRootView.setLayoutParams(new FrameLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT));
 
         String componentName = screen.screenId;
-        Bundle passProps = new Bundle();
-        passProps.putString(Screen.KEY_SCREEN_INSTANCE_ID, screen.screenInstanceId);
-        passProps.putString(Screen.KEY_NAVIGATOR_ID, screen.navigatorId);
-        passProps.putString(Screen.KEY_NAVIGATOR_EVENT_ID, screen.navigatorEventId);
+        Bundle passPropsBundle = new Bundle();
 
-        mReactRootView.startReactApplication(rctInstanceManager, componentName, passProps);
+        if (passProps != null) {
+            passPropsBundle.putAll(passProps);
+        }
 
-        if (onDisplayedListener != null) {
+        passPropsBundle.putString(Screen.KEY_SCREEN_INSTANCE_ID, screen.screenInstanceId);
+        passPropsBundle.putString(Screen.KEY_NAVIGATOR_ID, screen.navigatorId);
+        passPropsBundle.putString(Screen.KEY_NAVIGATOR_EVENT_ID, screen.navigatorEventId);
+
+        mReactRootView.startReactApplication(rctInstanceManager, componentName, passPropsBundle);
+
+        if (onDisplayedListener != null)
+
+        {
             mReactRootView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
                 @Override
                 public void onGlobalLayout() {
@@ -63,4 +73,3 @@ public class RctView extends FrameLayout {
         addView(mReactRootView);
     }
 }
-

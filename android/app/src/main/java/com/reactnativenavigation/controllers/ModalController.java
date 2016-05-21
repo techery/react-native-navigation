@@ -8,9 +8,6 @@ import com.reactnativenavigation.utils.RefUtils;
 import java.lang.ref.WeakReference;
 import java.util.Stack;
 
-/**
- * Created by guyc on 06/05/16.
- */
 public class ModalController {
     private static ModalController sInstance;
 
