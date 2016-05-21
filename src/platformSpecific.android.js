@@ -32,7 +32,7 @@ function startTabBasedApp(params) {
   }
 
   params.tabs.forEach(function (tab, idx) {
-    addNavigatorParams(tab, null, idx)
+    addNavigatorParams(tab, null, idx);
     addNavigatorButtons(tab);
     addNavigationStyleParams(tab);
   });
@@ -41,7 +41,7 @@ function startTabBasedApp(params) {
 }
 
 function navigatorPush(navigator, params) {
-  addNavigatorParams(params, navigator)
+  addNavigatorParams(params, navigator);
   addNavigatorButtons(params);
   addNavigationStyleParams(params);
   RctActivity.navigatorPush(params);
@@ -94,6 +94,10 @@ function addNavigationStyleParams(screen) {
   screen.navigatorStyle = Screen.navigatorStyle;
 }
 
+function navigatorSwitchToTab(navigator, params) {
+    RctActivity.switchTabInPager(params.tabIndex);
+}
+
 export default {
   startTabBasedApp,
   startSingleScreenApp,
@@ -101,5 +105,6 @@ export default {
   navigatorPop,
   showModal,
   dismissModal,
-  dismissAllModals
+  dismissAllModals,
+  navigatorSwitchToTab
 }
