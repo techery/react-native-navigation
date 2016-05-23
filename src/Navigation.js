@@ -1,5 +1,4 @@
-import React from 'react';
-import { AppRegistry } from 'react-native';
+import React, { AppRegistry } from 'react-native';
 import platformSpecific from './platformSpecific';
 import Screen from './Screen';
 
@@ -83,6 +82,22 @@ function dismissLightBox(params = {}) {
   return platformSpecific.dismissLightBox(params);
 }
 
+function lockToPortrait() {
+  return platformSpecific.lockToPortrait();
+}
+
+function lockToLandscape() {
+  return platformSpecific.lockToLandscape();
+}
+
+function lockToSensorLandscape() {
+  return platformSpecific.lockToSensorLandscape();
+}
+
+function unlockAllOrientations() {
+  return platformSpecific.unlockAllOrientations();
+}
+
 export default {
   registerScreen,
   getRegisteredScreen,
@@ -92,6 +107,10 @@ export default {
   dismissAllModals,
   showLightBox,
   dismissLightBox,
+  lockToPortrait,
+  lockToLandscape,
+  lockToSensorLandscape,
+  unlockAllOrientations,
   startTabBasedApp: platformSpecific.startTabBasedApp,
   startSingleScreenApp: platformSpecific.startSingleScreenApp
 }

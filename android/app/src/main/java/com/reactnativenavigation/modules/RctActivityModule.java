@@ -2,6 +2,7 @@ package com.reactnativenavigation.modules;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -29,6 +30,38 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
     @Override
     public String getName() {
         return REACT_CLASS;
+    }
+
+    @ReactMethod
+    public void lockToPortrait() {
+        final Activity currentActivity = ContextProvider.getActivityContext();
+        if (currentActivity != null) {
+            currentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+        }
+    }
+
+    @ReactMethod
+    public void lockToLandscape() {
+        final Activity currentActivity = ContextProvider.getActivityContext();
+        if (currentActivity != null) {
+            currentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        }
+    }
+
+    @ReactMethod
+    public void lockToSensorLandscape() {
+        final Activity currentActivity = ContextProvider.getActivityContext();
+        if (currentActivity != null) {
+            currentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
+    }
+
+    @ReactMethod
+    public void unlockAllOrientations() {
+        final Activity currentActivity = ContextProvider.getActivityContext();
+        if (currentActivity != null) {
+            currentActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
+        }
     }
 
     @ReactMethod

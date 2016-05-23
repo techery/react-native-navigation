@@ -98,6 +98,22 @@ function navigatorSwitchToTab(navigator, params) {
     RctActivity.switchTabInPager(params.tabIndex);
 }
 
+function lockToPortrait() {
+  return RctActivity.lockToPortrait();
+}
+
+function lockToLandscape() {
+  return RctActivity.lockToLandscape();
+}
+
+function lockToSensorLandscape() {
+  return RctActivity.lockToSensorLandscape();
+}
+
+function unlockAllOrientations() {
+  return RctActivity.unlockAllOrientations();
+}
+
 export default {
   startTabBasedApp,
   startSingleScreenApp,
@@ -106,5 +122,9 @@ export default {
   showModal,
   dismissModal,
   dismissAllModals,
-  navigatorSwitchToTab
+  navigatorSwitchToTab,
+  lockToPortrait,
+  lockToLandscape,
+  lockToSensorLandscape,
+  unlockAllOrientations
 }
