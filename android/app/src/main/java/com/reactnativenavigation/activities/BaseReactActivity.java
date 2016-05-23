@@ -1,5 +1,6 @@
 package com.reactnativenavigation.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.reactnativenavigation.packages.RnnPackage;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.ReactPackagesProvider;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,6 +120,14 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         packagesList.add(new MainReactPackage());
         packagesList.add(new RnnPackage());
         packagesList.addAll(ReactPackagesProvider.getPackageList());
+        for (Class<? extends ReactPackage> packageClass : ReactPackagesProvider.getPackagesClassesList()) {
+            try {
+                Constructor<?> constructor = packageClass.getConstructor(Activity.class);
+                packagesList.add((ReactPackage) constructor.newInstance(this));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
         return packagesList;
     }
 
