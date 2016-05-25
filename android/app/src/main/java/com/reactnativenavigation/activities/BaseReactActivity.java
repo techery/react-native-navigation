@@ -24,8 +24,10 @@ import com.facebook.react.common.ReactConstants;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
 import com.facebook.react.shell.MainReactPackage;
 import com.reactnativenavigation.BuildConfig;
+import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
+import com.reactnativenavigation.modal.RnnModal;
 import com.reactnativenavigation.packages.RnnPackage;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.ReactPackagesProvider;
@@ -161,7 +163,7 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         return getReactInstanceManager();
     }
 
-    protected ReactInstanceManager getReactInstanceManager() {
+    public ReactInstanceManager getReactInstanceManager() {
         RctManager rctManager = RctManager.getInstance();
         if (!rctManager.isInitialized()) {
             rctManager.init(this);
@@ -304,6 +306,18 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @Override
     public void invokeDefaultOnBackPressed() {
-        super.onBackPressed();
+        ModalController modalController = ModalController.getInstance();
+        RnnModal modal = modalController.get();
+        if (getScreenStackSize() > 1) {
+            pop(getCurrentNavigatorId());
+        } else if (modal != null) {
+            if (modal.getScreenStackSize() > 1) {
+                modal.pop();
+            } else {
+                modalController.dismissModal();
+            }
+        } else {
+            super.onBackPressed();
+        }
     }
 }

@@ -13,6 +13,7 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.facebook.react.ReactInstanceManager;
 import com.reactnativenavigation.R;
 import com.reactnativenavigation.activities.BaseReactActivity;
 import com.reactnativenavigation.controllers.ModalController;
@@ -27,12 +28,18 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     private View mContentView;
     private Screen mScreen;
     private int previousSystemUiVisibility;
+    private ReactInstanceManager mReactInstanceManager;
 
     public RnnModal(BaseReactActivity context, Screen screen) {
         super(context, R.style.Modal);
         mScreen = screen;
+        mReactInstanceManager = context.getReactInstanceManager();
         ModalController.getInstance().add(this);
         init(context);
+    }
+
+    public int getScreenStackSize() {
+        return mScreenStack.getStackSize();
     }
 
     @Override
@@ -81,7 +88,9 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
 
     @Override
     public void onBackPressed() {
-        if (mScreenStack.getStackSize() > 1) {
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onBackPressed();
+        } else if (mScreenStack.getStackSize() > 1) {
             mScreenStack.pop();
         } else {
             ModalController.getInstance().remove();
