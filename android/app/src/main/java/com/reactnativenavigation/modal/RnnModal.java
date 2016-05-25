@@ -40,7 +40,7 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         super.onCreate(savedInstanceState);
         if (mScreen.hideStatusBar) {
             previousSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
 
