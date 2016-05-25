@@ -114,6 +114,58 @@ function unlockAllOrientations() {
   return RctActivity.unlockAllOrientations();
 }
 
+function showMaterialDialog(options: any){
+  var callbackNames = [
+    'onPositive',
+    'onNegative',
+    'onNeutral',
+    'onAny',
+    'itemsCallback',
+    'itemsCallbackSingleChoice',
+    'itemsCallbackMultiChoice',
+    'showListener',
+    'cancelListener',
+    'dismissListener',
+  ];
+
+  var finalOptions = Object.assign({}, options);
+
+  var callbacks = {
+    error: (err, op) => console.error(err, op),
+  }
+
+  // Remove callbacks from the options, and store them separately
+  callbackNames.forEach(cb => {
+    if (cb in finalOptions) {
+      callbacks[cb] = finalOptions[cb];
+      finalOptions[cb] = true;
+    }
+  });
+
+  // Handle special case of input separately
+  if ('input' in finalOptions) {
+    finalOptions.input = Object.assign({}, finalOptions.input);
+    var inputCallback = finalOptions.input.callback || (x => console.log(x));
+    finalOptions.input.callback = true;
+    callbacks['input'] = inputCallback;
+  }
+
+  // Parse the result form multiple choice dialog
+  if ('itemsCallbackMultiChoice' in callbacks) {
+    var originalCallback = callbacks.itemsCallbackMultiChoice;
+    callbacks.itemsCallbackMultiChoice = selected => {
+      var indices = selected.split(',').map(x => parseInt(x));
+      var elements = indices.map(ind => (finalOptions.items || [])[ind]);
+
+      originalCallback(indices, elements);
+    }
+  }
+
+  var callbackFunc = (cb, ...rest) => callbacks[cb](...rest);
+
+  return RctActivity.showMaterialDialog(finalOptions, callbackFunc);
+}
+
 export default {
   startTabBasedApp,
   startSingleScreenApp,
@@ -126,5 +178,6 @@ export default {
   lockToPortrait,
   lockToLandscape,
   lockToSensorLandscape,
-  unlockAllOrientations
+  unlockAllOrientations,
+  showMaterialDialog
 }

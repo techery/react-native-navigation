@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
@@ -17,6 +19,7 @@ import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.modal.RnnModal;
 import com.reactnativenavigation.utils.ContextProvider;
+import com.reactnativenavigation.utils.MaterialDialogUtil;
 
 import java.util.ArrayList;
 
@@ -217,5 +220,23 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
                 }
             });
         }
+    }
+
+    MaterialDialog mDialog;
+
+    @ReactMethod
+    public void showMaterialDialog(final ReadableMap options, final Callback callback) {
+        final Activity mActivity = ContextProvider.getActivityContext();
+
+        if (mActivity == null) return;
+
+        mActivity.runOnUiThread(new Runnable() {
+            public void run() {
+                if (mDialog != null)
+                    mDialog.dismiss();
+                mDialog = MaterialDialogUtil.buildDialog(mActivity, options, callback, mDialog);
+                mDialog.show();
+            }
+        });
     }
 }

@@ -99,6 +99,10 @@ function unlockAllOrientations() {
   return platformSpecific.unlockAllOrientations();
 }
 
+function showMaterialDialog(options: any){
+  return platformSpecific.showMaterialDialog(options);
+}
+
 export default {
   registerScreen,
   getRegisteredScreen,
@@ -112,6 +116,7 @@ export default {
   lockToLandscape,
   lockToSensorLandscape,
   unlockAllOrientations,
+  showMaterialDialog,
   startTabBasedApp: platformSpecific.startTabBasedApp,
   startSingleScreenApp: platformSpecific.startSingleScreenApp
 }
