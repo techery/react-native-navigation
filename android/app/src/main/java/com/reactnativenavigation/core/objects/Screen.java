@@ -15,11 +15,13 @@ public class Screen extends JsonObject implements Serializable {
     public static final String KEY_NAVIGATOR_ID = "navigatorID";
     public static final String KEY_NAVIGATOR_EVENT_ID = "navigatorEventID";
     private static final String KEY_PASS_PROPS = "passProps";
+    private static final String KEY_HIDE_STATUS_BAR = "hideStatusBarAndroid";
 
     public final String screenId;
     public final String screenInstanceId;
     public final String navigatorId;
     public final String navigatorEventId;
+    public final boolean hideStatusBar;
 
     public Bundle passProps;
 
@@ -29,5 +31,6 @@ public class Screen extends JsonObject implements Serializable {
         screenInstanceId = getString(screen, KEY_SCREEN_INSTANCE_ID);
         navigatorId = getString(screen, KEY_NAVIGATOR_ID);
         navigatorEventId = getString(screen, KEY_NAVIGATOR_EVENT_ID);
+        hideStatusBar = getBoolean(screen, KEY_HIDE_STATUS_BAR);
     }
 }

@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -24,12 +26,22 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     private ScreenStack mScreenStack;
     private View mContentView;
     private Screen mScreen;
+    private int previousSystemUiVisibility;
 
     public RnnModal(BaseReactActivity context, Screen screen) {
         super(context, R.style.Modal);
         mScreen = screen;
         ModalController.getInstance().add(this);
         init(context);
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (mScreen.hideStatusBar) {
+            previousSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN);
+        }
     }
 
     @SuppressLint("InflateParams")
@@ -51,7 +63,11 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         // Set navigation colors
         if (SdkSupports.lollipop()) {
             Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            if (!mScreen.hideStatusBar) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+            }
         }
     }
 
@@ -76,5 +92,9 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     @Override
     public void onDismiss(DialogInterface dialog) {
         ModalController.getInstance().remove();
+
+        if (mScreen.hideStatusBar) {
+            getWindow().getDecorView().setSystemUiVisibility(previousSystemUiVisibility);
+        }
     }
 }
