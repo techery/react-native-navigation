@@ -294,14 +294,12 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @Override
     public void onBackPressed() {
-        if (getScreenStackSize() > 1) {
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onBackPressed();
+        } else if (getScreenStackSize() > 1) {
             pop(getCurrentNavigatorId());
         } else {
-            if (mReactInstanceManager != null) {
-                mReactInstanceManager.onBackPressed();
-            } else {
-                super.onBackPressed();
-            }
+            super.onBackPressed();
         }
     }
 
