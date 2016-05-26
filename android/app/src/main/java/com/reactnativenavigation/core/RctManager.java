@@ -30,6 +30,11 @@ public class RctManager {
         return sInstance;
     }
 
+    public static void destroy() {
+        sInstance.mReactManager = null;
+        sInstance = null;
+    }
+
     public ReactInstanceManager getReactInstanceManager() {
         return mReactManager;
     }

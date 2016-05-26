@@ -27,10 +27,10 @@ import com.reactnativenavigation.BuildConfig;
 import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
-import com.reactnativenavigation.modal.RnnModal;
 import com.reactnativenavigation.packages.RnnPackage;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.ReactPackagesProvider;
+import com.reactnativenavigation.modal.RnnModal;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -217,6 +217,7 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
             Log.i(TAG, "Destroying ReactInstanceManager");
             mReactInstanceManager.onHostDestroy();
+            RctManager.destroy();
         } else {
             Log.d(TAG, "Not destroying ReactInstanceManager");
         }
