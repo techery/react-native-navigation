@@ -22,13 +22,15 @@ import com.reactnativenavigation.utils.SdkSupports;
 import com.reactnativenavigation.views.RctView;
 import com.reactnativenavigation.views.ScreenStack;
 
+import java.util.Stack;
+
 public class RnnModal extends Dialog implements DialogInterface.OnDismissListener {
 
     private ScreenStack mScreenStack;
     private View mContentView;
     private Screen mScreen;
-    private int previousSystemUiVisibility;
     private ReactInstanceManager mReactInstanceManager;
+    private Stack<Boolean> statusBarVisibilityStack = new Stack<>();
 
     public RnnModal(BaseReactActivity context, Screen screen) {
         super(context, R.style.Modal);
@@ -45,10 +47,6 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mScreen.hideStatusBar) {
-            previousSystemUiVisibility = getWindow().getDecorView().getSystemUiVisibility();
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        }
     }
 
     @SuppressLint("InflateParams")
@@ -66,24 +64,40 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
                 mContentView.animate();
             }
         });
-
-        // Set navigation colors
-        if (SdkSupports.lollipop()) {
-            Window window = getWindow();
-            if (!mScreen.hideStatusBar) {
-                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
-            }
-        }
+        pushStatusBarScreen(mScreen);
     }
 
     public void push(Screen screen) {
         mScreenStack.push(screen);
+        pushStatusBarScreen(screen);
+    }
+
+    private void pushStatusBarScreen(Screen screen) {
+        final boolean showStatusBar = !screen.hideStatusBar;
+        statusBarVisibilityStack.push(showStatusBar);
+        changeStatusBarVisibility(showStatusBar);
     }
 
     public Screen pop() {
+        final boolean showStatusBar = statusBarVisibilityStack.pop();
+        changeStatusBarVisibility(showStatusBar);
         return mScreenStack.pop();
+    }
+
+    private void changeStatusBarVisibility(boolean showStatusBar) {
+        final Window window = getWindow();
+        if (showStatusBar) {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            window.addFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            if (SdkSupports.lollipop()) {
+                window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+                window.setStatusBarColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryDark));
+            }
+        } else {
+            window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
+            window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     @Override
@@ -101,9 +115,5 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     @Override
     public void onDismiss(DialogInterface dialog) {
         ModalController.getInstance().remove();
-
-        if (mScreen.hideStatusBar) {
-            getWindow().getDecorView().setSystemUiVisibility(previousSystemUiVisibility);
-        }
     }
 }
