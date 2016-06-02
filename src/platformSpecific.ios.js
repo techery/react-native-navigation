@@ -363,11 +363,15 @@ function showModal(params) {
     }
   });
   ControllerRegistry.registerController(controllerID, () => Controller);
-  Modal.showController(controllerID, params.animationType);
+  Modal.showController(controllerID, params.orientationIOS, params.animationType);
 }
 
 function dismissModal(params) {
   Modal.dismissController(params.animationType);
+}
+
+function dismissMeasurementFlow(params) {
+  Modal.dismissMeasurementFlow();
 }
 
 function dismissAllModals(params) {
@@ -411,6 +415,7 @@ export default {
   navigatorResetTo,
   showModal,
   dismissModal,
+  dismissMeasurementFlow,
   dismissAllModals,
   showLightBox,
   dismissLightBox,

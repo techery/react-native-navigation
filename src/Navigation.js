@@ -71,6 +71,10 @@ function dismissModal(params = {}) {
   return platformSpecific.dismissModal(params);
 }
 
+function dismissMeasurementFlow(params = {}) {
+  return platformSpecific.dismissMeasurementFlow(params);
+}
+
 function dismissAllModals(params = {}) {
   return platformSpecific.dismissAllModals(params);
 }
@@ -109,6 +113,7 @@ export default {
   registerComponent,
   showModal,
   dismissModal,
+  dismissMeasurementFlow,
   dismissAllModals,
   showLightBox,
   dismissLightBox,

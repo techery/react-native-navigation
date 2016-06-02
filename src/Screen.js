@@ -41,6 +41,10 @@ class Navigator {
     return Navigation.dismissModal(params);
   }
 
+  dismissMeasurementFlow(params = {}) {
+    return Navigation.dismissMeasurementFlow(params);
+  }
+
   dismissAllModals(params = {}) {
     return Navigation.dismissAllModals(params);
   }
