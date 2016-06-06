@@ -31,6 +31,8 @@ public class RctManager {
     }
 
     public static void destroy() {
+        if (sInstance == null) return;
+        
         sInstance.mReactManager = null;
         sInstance = null;
     }
