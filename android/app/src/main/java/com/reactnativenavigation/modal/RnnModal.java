@@ -1,11 +1,14 @@
 package com.reactnativenavigation.modal;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
@@ -18,6 +21,7 @@ import com.reactnativenavigation.R;
 import com.reactnativenavigation.activities.BaseReactActivity;
 import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.objects.Screen;
+import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.SdkSupports;
 import com.reactnativenavigation.views.RctView;
 import com.reactnativenavigation.views.ScreenStack;
@@ -31,6 +35,7 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     private Screen mScreen;
     private ReactInstanceManager mReactInstanceManager;
     private Stack<Boolean> statusBarVisibilityStack = new Stack<>();
+    private Stack<String> orientationStack = new Stack<>();
 
     public RnnModal(BaseReactActivity context, Screen screen) {
         super(context, R.style.Modal);
@@ -65,6 +70,7 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
             }
         });
         pushStatusBarScreen(mScreen);
+        pushOrientationScreen(mScreen);
     }
 
     public void push(Screen screen) {
@@ -78,9 +84,17 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         changeStatusBarVisibility(showStatusBar);
     }
 
+    private void pushOrientationScreen(Screen screen) {
+        final String orientation = screen.orientation;
+        orientationStack.push(orientation);
+        lockOrientation(orientation);
+    }
+
     public Screen pop() {
         final boolean showStatusBar = statusBarVisibilityStack.pop();
         changeStatusBarVisibility(showStatusBar);
+        final String orientation = orientationStack.pop();
+        lockOrientation(orientation);
         return mScreenStack.pop();
     }
 
@@ -97,6 +111,25 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         } else {
             window.clearFlags(WindowManager.LayoutParams.FLAG_FORCE_NOT_FULLSCREEN);
             window.addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
+    private void lockOrientation(String orientation) {
+        final Activity activity = ContextProvider.getActivityContext();
+
+        if (activity == null) {
+            return;
+        }
+
+        switch (orientation) {
+            case "portrait":
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+                break;
+            case "landscape":
+                activity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                break;
+            default:
+                throw new Error("Unknown orientation: " + orientation);
         }
     }
 
