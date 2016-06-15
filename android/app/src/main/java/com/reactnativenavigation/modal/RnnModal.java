@@ -68,7 +68,7 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
                 mContentView.setAnimation(animation);
                 mContentView.animate();
             }
-        });
+        }, mScreen.passProps);
         pushStatusBarScreen(mScreen);
         pushOrientationScreen(mScreen);
     }
