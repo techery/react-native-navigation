@@ -19,12 +19,6 @@ public class RootActivity extends BaseReactActivity {
         getReactInstanceManager().createReactContextInBackground();
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        finish();
-    }
-
     // No need to implement stack interface since this activity is only used to start other
     // activities such as TabActivity or SingleScreenActivity.
     @Override
