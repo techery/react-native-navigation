@@ -91,8 +91,10 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     }
 
     public Screen pop() {
-        final boolean showStatusBar = statusBarVisibilityStack.pop();
-        changeStatusBarVisibility(showStatusBar);
+        if (statusBarVisibilityStack.size() > 0) {
+            final boolean showStatusBar = statusBarVisibilityStack.pop();
+            changeStatusBarVisibility(showStatusBar);
+        }
         if (orientationStack.size() > 0) {
             final String orientation = orientationStack.pop();
             lockOrientation(orientation);
