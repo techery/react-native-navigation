@@ -156,6 +156,20 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         handleOnCreate();
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Destroy react instance manager only if there are no resumed react activities
+        BaseReactActivity activity = ContextProvider.getActivityContext();
+        if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
+            Log.i(TAG, "Destroying ReactInstanceManager");
+            mReactInstanceManager.onHostDestroy();
+            RctManager.destroy();
+        } else {
+            Log.d(TAG, "Not destroying ReactInstanceManager");
+        }
+    }
+
     /**
      * A subclass may override this method if it needs to use a custom instance.
      */
@@ -206,21 +220,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         }
 
         ContextProvider.clearActivityContext();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        // Destroy react instance manager only if there are no resumed react activities
-        BaseReactActivity activity = ContextProvider.getActivityContext();
-        if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
-            Log.i(TAG, "Destroying ReactInstanceManager");
-            mReactInstanceManager.onHostDestroy();
-            RctManager.destroy();
-        } else {
-            Log.d(TAG, "Not destroying ReactInstanceManager");
-        }
     }
 
     @CallSuper
