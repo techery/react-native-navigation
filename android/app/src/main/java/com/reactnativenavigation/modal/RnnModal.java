@@ -61,20 +61,13 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         mScreenStack = (ScreenStack) mContentView.findViewById(R.id.screenStack);
 
         setContentView(mContentView);
-        mScreenStack.push(mScreen, new RctView.OnDisplayedListener() {
-            @Override
-            public void onDisplayed() {
-                Animation animation = AnimationUtils.loadAnimation(context, R.anim.slide_up);
-                mContentView.setAnimation(animation);
-                mContentView.animate();
-            }
-        }, mScreen.passProps);
+        mScreenStack.push(mScreen, null, mScreen.passProps);
         pushStatusBarScreen(mScreen);
         pushOrientationScreen(mScreen);
     }
 
     public void push(Screen screen) {
-        mScreenStack.push(screen);
+        mScreenStack.push(screen, null, screen.passProps);
         pushStatusBarScreen(screen);
     }
 
