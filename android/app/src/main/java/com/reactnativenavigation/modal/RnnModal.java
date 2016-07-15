@@ -8,13 +8,10 @@ import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 
 import com.facebook.react.ReactInstanceManager;
 import com.reactnativenavigation.R;
@@ -23,7 +20,6 @@ import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.SdkSupports;
-import com.reactnativenavigation.views.RctView;
 import com.reactnativenavigation.views.ScreenStack;
 
 import java.util.Stack;
@@ -140,6 +136,12 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
             ModalController.getInstance().remove();
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        mScreenStack.unmountView();
     }
 
     @Override

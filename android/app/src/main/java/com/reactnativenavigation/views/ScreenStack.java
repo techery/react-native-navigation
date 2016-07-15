@@ -75,6 +75,9 @@ public class ScreenStack extends FrameLayout {
         if (mStack.isEmpty()) {
             return null;
         }
+
+        unmountView();
+
         ScreenView popped = mStack.pop();
         if (!mStack.isEmpty()) {
             addView(mStack.peek().view, 0);
@@ -95,5 +98,11 @@ public class ScreenStack extends FrameLayout {
 
     public Screen peek() {
         return mStack.peek().screen;
+    }
+
+    public void unmountView() {
+        if (!mStack.isEmpty()) {
+            mStack.peek().view.getReactRootView().unmountReactApplication();
+        }
     }
 }
