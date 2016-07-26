@@ -116,9 +116,13 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         super.onDestroy();
         ModalController.getInstance().dismissAllModals();
         navigationHandler.removeCallbacksAndMessages(null);
+        navigationHandler = null;
     }
 
     public void postNavigationRunnable(Runnable runnable) {
+        if (navigationHandler == null) {
+            return;
+        }
         navigationHandler.post(runnable);
     }
 
