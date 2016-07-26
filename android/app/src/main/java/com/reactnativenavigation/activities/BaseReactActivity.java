@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Settings;
 import android.support.annotation.CallSuper;
 import android.support.v7.app.AppCompatActivity;
@@ -42,7 +43,6 @@ import javax.annotation.Nullable;
  * Base Activity for React Native applications.
  */
 public abstract class BaseReactActivity extends AppCompatActivity implements DefaultHardwareBackBtnHandler {
-
     private static final String TAG = "BaseReactActivity";
     private static final String REDBOX_PERMISSION_MESSAGE =
             "Overlay permissions needs to be granted in order for react native apps to run in dev mode";
@@ -51,6 +51,76 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     protected ReactInstanceManager mReactInstanceManager;
     private boolean mDoRefresh = false;
     private Menu mMenu;
+    private Handler navigationHandler;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        navigationHandler = new Handler(Looper.getMainLooper());
+        mReactInstanceManager = createReactInstanceManager();
+        handleOnCreate();
+    }
+
+    protected void handleOnCreate() {
+        if (getUseDeveloperSupport() && Build.VERSION.SDK_INT >= 23) {
+            // Get permission to show redbox in dev builds.
+            if (!Settings.canDrawOverlays(this)) {
+                Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(serviceIntent);
+                FLog.w(ReactConstants.TAG, REDBOX_PERMISSION_MESSAGE);
+                Toast.makeText(this, REDBOX_PERMISSION_MESSAGE, Toast.LENGTH_LONG).show();
+            }
+        }
+
+        ReactRootView mReactRootView = createRootView();
+        mReactRootView.startReactApplication(mReactInstanceManager, getMainComponentName(), getLaunchOptions());
+        setContentView(mReactRootView);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        ContextProvider.setActivityContext(this);
+
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostResume(this, this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mReactInstanceManager != null) {
+            mReactInstanceManager.onHostPause();
+        }
+
+        ContextProvider.clearActivityContext();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        // Destroy react instance manager only if there are no resumed react activities
+        BaseReactActivity activity = ContextProvider.getActivityContext();
+        if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
+            Log.i(TAG, "Destroying ReactInstanceManager");
+            mReactInstanceManager.onHostDestroy();
+            RctManager.destroy();
+        } else {
+            Log.d(TAG, "Not destroying ReactInstanceManager");
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ModalController.getInstance().dismissAllModals();
+        navigationHandler.removeCallbacksAndMessages(null);
+    }
+
+    public void postNavigationRunnable(Runnable runnable) {
+        navigationHandler.post(runnable);
+    }
 
     /**
      * Returns the name of the bundle in assets. If this is null, and no file path is specified for
@@ -149,27 +219,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         return new ReactRootView(this);
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mReactInstanceManager = createReactInstanceManager();
-        handleOnCreate();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        // Destroy react instance manager only if there are no resumed react activities
-        BaseReactActivity activity = ContextProvider.getActivityContext();
-        if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
-            Log.i(TAG, "Destroying ReactInstanceManager");
-            mReactInstanceManager.onHostDestroy();
-            RctManager.destroy();
-        } else {
-            Log.d(TAG, "Not destroying ReactInstanceManager");
-        }
-    }
-
     /**
      * A subclass may override this method if it needs to use a custom instance.
      */
@@ -183,43 +232,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
             rctManager.init(this);
         }
         return rctManager.getReactInstanceManager();
-    }
-
-    protected void handleOnCreate() {
-        if (getUseDeveloperSupport() && Build.VERSION.SDK_INT >= 23) {
-            // Get permission to show redbox in dev builds.
-            if (!Settings.canDrawOverlays(this)) {
-                Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                startActivity(serviceIntent);
-                FLog.w(ReactConstants.TAG, REDBOX_PERMISSION_MESSAGE);
-                Toast.makeText(this, REDBOX_PERMISSION_MESSAGE, Toast.LENGTH_LONG).show();
-            }
-        }
-
-        ReactRootView mReactRootView = createRootView();
-        mReactRootView.startReactApplication(mReactInstanceManager, getMainComponentName(), getLaunchOptions());
-        setContentView(mReactRootView);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        ContextProvider.setActivityContext(this);
-
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostResume(this, this);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostPause();
-        }
-
-        ContextProvider.clearActivityContext();
     }
 
     @CallSuper
