@@ -118,7 +118,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
         if (modalController.isModalDisplayed()) {
             final RnnModal modal = modalController.get();
             if (modal != null) {
-                context.runOnUiThread(new Runnable() {
+                context.postNavigationRunnable(new Runnable() {
                     @Override
                     public void run() {
                         modal.push(screen);
@@ -129,7 +129,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
         }
 
         // No Modal is displayed, Push to activity
-        context.runOnUiThread(new Runnable() {
+        context.postNavigationRunnable(new Runnable() {
             @Override
             public void run() {
                 context.push(screen);
@@ -150,7 +150,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
         if (modalController.isModalDisplayed()) {
             final RnnModal modal = modalController.get();
             if (modal != null) {
-                context.runOnUiThread(new Runnable() {
+                context.postNavigationRunnable(new Runnable() {
                     @Override
                     public void run() {
                         modal.pop();
@@ -160,7 +160,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
             return;
         }
 
-        context.runOnUiThread(new Runnable() {
+        context.postNavigationRunnable(new Runnable() {
             @Override
             public void run() {
                 context.pop(navigatorId);
@@ -170,12 +170,12 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void showModal(final ReadableMap screen) {
-        final BaseReactActivity context = ContextProvider.getActivityContext();
-        if (context != null && !context.isFinishing()) {
-            context.runOnUiThread(new Runnable() {
+        final BaseReactActivity activity = ContextProvider.getActivityContext();
+        if (activity != null && !activity.isFinishing()) {
+            activity.postNavigationRunnable(new Runnable() {
                 @Override
                 public void run() {
-                    new RnnModal(context, new Screen(screen)).show();
+                    new RnnModal(activity, new Screen(screen)).show();
                 }
             });
         }
@@ -185,7 +185,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
     public void dismissAllModals(final ReadableMap params) {
         final BaseReactActivity context = ContextProvider.getActivityContext();
         if (context != null && !context.isFinishing()) {
-            context.runOnUiThread(new Runnable() {
+            context.postNavigationRunnable(new Runnable() {
                 @Override
                 public void run() {
                     ModalController modalController = ModalController.getInstance();
