@@ -16,8 +16,6 @@ public class TabActivity extends BaseReactActivity {
 
     @Override
     protected void handleOnCreate() {
-        mReactInstanceManager = RctManager.getInstance().getReactInstanceManager();
-
         setContentView(R.layout.tab_activity);
         mViewPager = (NonSwipeableViewPager) findViewById(R.id.viewPager);
 

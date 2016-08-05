@@ -29,8 +29,6 @@ public class ScreenStack extends FrameLayout {
     }
 
     private final Stack<ScreenView> mStack = new Stack<>();
-    private final ReactInstanceManager mReactInstanceManager =
-            RctManager.getInstance().getReactInstanceManager();
     private BaseReactActivity mReactActivity;
 
     public ScreenStack(BaseReactActivity context) {
@@ -61,7 +59,9 @@ public class ScreenStack extends FrameLayout {
         if (!mStack.isEmpty()) {
             oldView = mStack.peek().view;
         }
-        RctView view = new RctView(mReactActivity, mReactInstanceManager, screen, onDisplayed, passProps);
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        RctView view = new RctView(mReactActivity, reactInstanceManager, screen, onDisplayed, passProps);
         addView(view, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         if (oldView != null) {
             ReactRootView reactRootView = oldView.getReactRootView();

@@ -1,6 +1,8 @@
 package com.reactnativenavigation.activities;
 
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
+import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
 
 /**
@@ -12,11 +14,12 @@ import com.reactnativenavigation.core.objects.Screen;
  * Created by guyc on 13/04/16.
  */
 public class RootActivity extends BaseReactActivity {
-
     @Override
     protected void handleOnCreate() {
         // Trigger react context initialization, global javascript code will now execute
-        getReactInstanceManager().createReactContextInBackground();
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+        assert reactInstanceManager != null;
+        reactInstanceManager.createReactContextInBackground();
     }
 
     // No need to implement stack interface since this activity is only used to start other

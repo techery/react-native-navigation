@@ -1,13 +1,10 @@
 package com.reactnativenavigation.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.provider.Settings;
 import android.support.annotation.CallSuper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,27 +12,15 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.facebook.common.logging.FLog;
 import com.facebook.react.ReactInstanceManager;
-import com.facebook.react.ReactPackage;
 import com.facebook.react.ReactRootView;
-import com.facebook.react.common.ReactConstants;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
-import com.facebook.react.shell.MainReactPackage;
-import com.reactnativenavigation.BuildConfig;
 import com.reactnativenavigation.controllers.ModalController;
 import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
-import com.reactnativenavigation.packages.RnnPackage;
-import com.reactnativenavigation.utils.ContextProvider;
-import com.reactnativenavigation.utils.ReactPackagesProvider;
 import com.reactnativenavigation.modal.RnnModal;
-
-import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.List;
+import com.reactnativenavigation.utils.ContextProvider;
 
 import javax.annotation.Nullable;
 
@@ -44,12 +29,9 @@ import javax.annotation.Nullable;
  */
 public abstract class BaseReactActivity extends AppCompatActivity implements DefaultHardwareBackBtnHandler {
     private static final String TAG = "BaseReactActivity";
-    private static final String REDBOX_PERMISSION_MESSAGE =
-            "Overlay permissions needs to be granted in order for react native apps to run in dev mode";
 
-    @Nullable
-    protected ReactInstanceManager mReactInstanceManager;
     private boolean mDoRefresh = false;
+
     private Menu mMenu;
     private Handler navigationHandler;
 
@@ -57,23 +39,12 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         navigationHandler = new Handler(Looper.getMainLooper());
-        mReactInstanceManager = createReactInstanceManager();
         handleOnCreate();
     }
 
     protected void handleOnCreate() {
-        if (getUseDeveloperSupport() && Build.VERSION.SDK_INT >= 23) {
-            // Get permission to show redbox in dev builds.
-            if (!Settings.canDrawOverlays(this)) {
-                Intent serviceIntent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                startActivity(serviceIntent);
-                FLog.w(ReactConstants.TAG, REDBOX_PERMISSION_MESSAGE);
-                Toast.makeText(this, REDBOX_PERMISSION_MESSAGE, Toast.LENGTH_LONG).show();
-            }
-        }
-
         ReactRootView mReactRootView = createRootView();
-        mReactRootView.startReactApplication(mReactInstanceManager, getMainComponentName(), getLaunchOptions());
+        mReactRootView.startReactApplication(RctManager.getReactInstanceManager(), getMainComponentName(), getLaunchOptions());
         setContentView(mReactRootView);
     }
 
@@ -82,16 +53,18 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         super.onResume();
         ContextProvider.setActivityContext(this);
 
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostResume(this, this);
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onHostResume(this, this);
         }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onHostPause();
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onHostPause();
         }
 
         ContextProvider.clearActivityContext();
@@ -102,9 +75,11 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         super.onStop();
         // Destroy react instance manager only if there are no resumed react activities
         BaseReactActivity activity = ContextProvider.getActivityContext();
-        if (mReactInstanceManager != null && (activity == null || activity.isFinishing())) {
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null && (activity == null || activity.isFinishing())) {
             Log.i(TAG, "Destroying ReactInstanceManager");
-            mReactInstanceManager.onHostDestroy();
+            reactInstanceManager.onHostDestroy();
             RctManager.destroy();
         } else {
             Log.d(TAG, "Not destroying ReactInstanceManager");
@@ -179,35 +154,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         return "";
     }
 
-    /**
-     * Returns whether dev mode should be enabled. This enables e.g. the dev menu.
-     */
-    public boolean getUseDeveloperSupport() {
-        return BuildConfig.DEBUG;
-    }
-
-    /**
-     * Returns a list of {@link ReactPackage} used by the app.
-     * You'll most likely want to return at least the {@code MainReactPackage}.
-     * If your app uses additional views or modules besides the default ones,
-     * you'll want to include more packages here.
-     */
-    public List<ReactPackage> getPackages() {
-        List<ReactPackage> packagesList = new ArrayList<>();
-        packagesList.add(new MainReactPackage());
-        packagesList.add(new RnnPackage());
-        packagesList.addAll(ReactPackagesProvider.getPackageList());
-        for (Class<? extends ReactPackage> packageClass : ReactPackagesProvider.getPackagesClassesList()) {
-            try {
-                Constructor<?> constructor = packageClass.getConstructor(Activity.class);
-                packagesList.add((ReactPackage) constructor.newInstance(this));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        return packagesList;
-    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -221,21 +167,6 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
      */
     protected ReactRootView createRootView() {
         return new ReactRootView(this);
-    }
-
-    /**
-     * A subclass may override this method if it needs to use a custom instance.
-     */
-    protected ReactInstanceManager createReactInstanceManager() {
-        return getReactInstanceManager();
-    }
-
-    public ReactInstanceManager getReactInstanceManager() {
-        RctManager rctManager = RctManager.getInstance();
-        if (!rctManager.isInitialized()) {
-            rctManager.init(this);
-        }
-        return rctManager.getReactInstanceManager();
     }
 
     @CallSuper
@@ -273,23 +204,27 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onActivityResult(requestCode, resultCode, data);
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     @Override
     public boolean onKeyUp(int keyCode, KeyEvent event) {
-        if (mReactInstanceManager != null &&
-                mReactInstanceManager.getDevSupportManager().getDevSupportEnabled()) {
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null &&
+                reactInstanceManager.getDevSupportManager().getDevSupportEnabled()) {
             if (keyCode == KeyEvent.KEYCODE_MENU) {
-                mReactInstanceManager.showDevOptionsDialog();
+                reactInstanceManager.showDevOptionsDialog();
                 return true;
             }
             if (keyCode == KeyEvent.KEYCODE_R && !(getCurrentFocus() instanceof EditText)) {
                 // Enable double-tap-R-to-reload
                 if (mDoRefresh) {
-                    mReactInstanceManager.getDevSupportManager().handleReloadJS();
+                    reactInstanceManager.getDevSupportManager().handleReloadJS();
                     mDoRefresh = false;
                 } else {
                     mDoRefresh = true;
@@ -309,8 +244,10 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @Override
     public void onBackPressed() {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onBackPressed();
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onBackPressed();
         } else if (getScreenStackSize() > 1) {
             pop(getCurrentNavigatorId());
         } else {

@@ -17,6 +17,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.reactnativenavigation.R;
 import com.reactnativenavigation.activities.BaseReactActivity;
 import com.reactnativenavigation.controllers.ModalController;
+import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.utils.ContextProvider;
 import com.reactnativenavigation.utils.SdkSupports;
@@ -27,18 +28,15 @@ import java.util.Stack;
 public class RnnModal extends Dialog implements DialogInterface.OnDismissListener {
 
     private ScreenStack mScreenStack;
-    private View mContentView;
     private Screen mScreen;
-    private ReactInstanceManager mReactInstanceManager;
     private Stack<Boolean> statusBarVisibilityStack = new Stack<>();
     private Stack<String> orientationStack = new Stack<>();
 
-    public RnnModal(BaseReactActivity context, Screen screen) {
-        super(context, R.style.Modal);
+    public RnnModal(BaseReactActivity baseReactActivity, Screen screen) {
+        super(baseReactActivity, R.style.Modal);
         mScreen = screen;
-        mReactInstanceManager = context.getReactInstanceManager();
         ModalController.getInstance().add(this);
-        init(context);
+        init(baseReactActivity);
     }
 
     public int getScreenStackSize() {
@@ -53,7 +51,7 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     @SuppressLint("InflateParams")
     private void init(final Context context) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mContentView = LayoutInflater.from(context).inflate(R.layout.modal_layout, null, false);
+        View mContentView = LayoutInflater.from(context).inflate(R.layout.modal_layout, null, false);
         mScreenStack = (ScreenStack) mContentView.findViewById(R.id.screenStack);
 
         setContentView(mContentView);
@@ -128,8 +126,10 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
 
     @Override
     public void onBackPressed() {
-        if (mReactInstanceManager != null) {
-            mReactInstanceManager.onBackPressed();
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null) {
+            reactInstanceManager.onBackPressed();
         } else if (mScreenStack.getStackSize() > 1) {
             mScreenStack.pop();
         } else {

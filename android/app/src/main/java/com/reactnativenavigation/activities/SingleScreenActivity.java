@@ -2,6 +2,7 @@ package com.reactnativenavigation.activities;
 
 import android.widget.FrameLayout;
 
+import com.facebook.react.ReactInstanceManager;
 import com.reactnativenavigation.R;
 import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
@@ -16,8 +17,6 @@ public class SingleScreenActivity extends BaseReactActivity {
 
     @Override
     protected void handleOnCreate() {
-        mReactInstanceManager = RctManager.getInstance().getReactInstanceManager();
-
         setContentView(R.layout.single_screen_activity);
 
         Screen screen = (Screen) getIntent().getSerializableExtra(EXTRA_SCREEN);
