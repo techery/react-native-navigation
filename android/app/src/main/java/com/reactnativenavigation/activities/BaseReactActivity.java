@@ -259,14 +259,14 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     public void invokeDefaultOnBackPressed() {
         ModalController modalController = ModalController.getInstance();
         RnnModal modal = modalController.get();
-        if (getScreenStackSize() > 1) {
-            pop(getCurrentNavigatorId());
-        } else if (modal != null) {
+        if (modal != null) {
             if (modal.getScreenStackSize() > 1) {
                 modal.pop();
             } else {
                 modalController.dismissModal();
             }
+        } else if (getScreenStackSize() > 1) {
+            pop(getCurrentNavigatorId());
         } else {
             super.onBackPressed();
         }
