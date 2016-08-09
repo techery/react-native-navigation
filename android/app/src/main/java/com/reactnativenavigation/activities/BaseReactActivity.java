@@ -34,6 +34,7 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     private Menu mMenu;
     private Handler navigationHandler;
+    private static OnActivityResultListener onActivityResultListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +210,10 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         if (reactInstanceManager != null) {
             reactInstanceManager.onActivityResult(requestCode, resultCode, data);
         }
+
+        if (onActivityResultListener != null) {
+            onActivityResultListener.handleOnActivityResult(requestCode, resultCode, data);
+        }
     }
 
     @Override
@@ -270,5 +275,13 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         } else {
             super.onBackPressed();
         }
+    }
+
+    public static void setOnActivityResultListener(OnActivityResultListener onActivityResultListener) {
+        BaseReactActivity.onActivityResultListener = onActivityResultListener;
+    }
+
+    public interface OnActivityResultListener {
+        void handleOnActivityResult(int requestCode, int resultCode, Intent data);
     }
 }
