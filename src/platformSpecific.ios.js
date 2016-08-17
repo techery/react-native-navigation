@@ -9,6 +9,9 @@ const {
   DrawerControllerIOS
 } = React;
 
+// FIXME: shared variable
+let tabBarControllerID;
+
 function startTabBasedApp(params) {
   if (!params.tabs) {
     console.error('startTabBasedApp(params): params.tabs is required');
@@ -35,9 +38,10 @@ function startTabBasedApp(params) {
       }
     },
     renderBody: function() {
+      tabBarControllerID = controllerID + '_tabs';
       return (
         <TabBarControllerIOS
-          id={controllerID + '_tabs'}
+          id={tabBarControllerID}
           style={params.tabsStyle}>
           {
           params.tabs.map(function(tab, index) {
@@ -300,13 +304,12 @@ function navigatorSetTabBadge(navigator, params) {
 }
 
 function navigatorSwitchToTab(navigator, params) {
-  const controllerID = navigator.navigatorID.split('_')[0];
   if (params.tabIndex || params.tabIndex === 0) {
-    Controllers.TabBarControllerIOS(controllerID + '_tabs').switchTo({
+    Controllers.TabBarControllerIOS(tabBarControllerID).switchTo({
       tabIndex: params.tabIndex
     });
   } else {
-    Controllers.TabBarControllerIOS(controllerID + '_tabs').switchTo({
+    Controllers.TabBarControllerIOS(tabBarControllerID).switchTo({
       contentId: navigator.navigatorID,
       contentType: 'NavigationControllerIOS'
     });
