@@ -72,27 +72,22 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        // Destroy react instance manager only if there are no resumed react activities
-        BaseReactActivity activity = ContextProvider.getActivityContext();
-        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
-
-        if (reactInstanceManager != null && (activity == null || activity.isFinishing())) {
-            Log.i(TAG, "Destroying ReactInstanceManager");
-            reactInstanceManager.onHostDestroy();
-            RctManager.destroy();
-        } else {
-            Log.d(TAG, "Not destroying ReactInstanceManager");
-        }
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         ModalController.getInstance().dismissAllModals();
         navigationHandler.removeCallbacksAndMessages(null);
         navigationHandler = null;
+
+        BaseReactActivity activity = ContextProvider.getActivityContext();
+        ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
+
+        if (reactInstanceManager != null && (activity == null || activity.isFinishing())) {
+            Log.i(TAG, "Destroying ReactInstanceManager");
+            reactInstanceManager.destroy();
+            RctManager.destroy();
+        } else {
+            Log.d(TAG, "Not destroying ReactInstanceManager");
+        }
     }
 
     public void postNavigationRunnable(Runnable runnable) {
