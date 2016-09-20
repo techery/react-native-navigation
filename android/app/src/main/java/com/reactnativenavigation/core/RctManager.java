@@ -42,7 +42,7 @@ public class RctManager {
     }
 
     public boolean isInitialized() {
-        return reactInstanceManager != null;
+        return reactInstanceManager != null && reactInstanceManager.getCurrentReactContext() != null;
     }
 
     public void sendEvent(String eventName, Screen screen, WritableMap params) {
