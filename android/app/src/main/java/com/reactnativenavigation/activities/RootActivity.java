@@ -19,6 +19,9 @@ public class RootActivity extends BaseReactActivity {
         // Trigger react context initialization, global javascript code will now execute
         ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
         assert reactInstanceManager != null;
+        if (reactInstanceManager.hasStartedCreatingInitialContext()) {
+            reactInstanceManager.destroy();
+        }
         reactInstanceManager.createReactContextInBackground();
     }
 
