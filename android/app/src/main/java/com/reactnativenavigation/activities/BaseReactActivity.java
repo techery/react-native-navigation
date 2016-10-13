@@ -203,7 +203,7 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         ReactInstanceManager reactInstanceManager = RctManager.getReactInstanceManager();
 
         if (reactInstanceManager != null) {
-            reactInstanceManager.onActivityResult(requestCode, resultCode, data);
+            reactInstanceManager.onActivityResult(this, requestCode, resultCode, data);
         }
 
         if (onActivityResultListener != null) {
