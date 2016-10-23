@@ -79,6 +79,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
             intent.putExtras(extras);
 
             context.startActivity(intent);
+            context.overridePendingTransition(0, 0);
         }
     }
 
@@ -102,6 +103,7 @@ public class RctActivityModule extends ReactContextBaseJavaModule {
             intent.putExtras(extras);
 
             context.startActivity(intent);
+            context.overridePendingTransition(0, 0);
         }
     }
 

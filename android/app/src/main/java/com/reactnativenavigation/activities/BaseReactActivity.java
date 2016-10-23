@@ -35,9 +35,14 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
     private Menu mMenu;
     private Handler navigationHandler;
     private static OnActivityResultListener onActivityResultListener;
+    private static int themeResId = -1;
+    private static int defaultThemeResId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (themeResId != -1) {
+            setTheme(themeResId);
+        }
         super.onCreate(savedInstanceState);
         navigationHandler = new Handler(Looper.getMainLooper());
         handleOnCreate();
@@ -51,6 +56,9 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     @Override
     protected void onResume() {
+        if (defaultThemeResId != -1) {
+            setTheme(defaultThemeResId);
+        }
         super.onResume();
         ContextProvider.setActivityContext(this);
 
@@ -278,5 +286,13 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
 
     public interface OnActivityResultListener {
         void handleOnActivityResult(int requestCode, int resultCode, Intent data);
+    }
+
+    public static void setThemeResId(int themeResId) {
+        BaseReactActivity.themeResId = themeResId;
+    }
+
+    public static void setDefaultThemeResId(int defaultThemeResId) {
+        BaseReactActivity.defaultThemeResId = defaultThemeResId;
     }
 }

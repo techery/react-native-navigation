@@ -2,9 +2,7 @@ package com.reactnativenavigation.activities;
 
 import android.widget.FrameLayout;
 
-import com.facebook.react.ReactInstanceManager;
 import com.reactnativenavigation.R;
-import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.views.ScreenStack;
 
