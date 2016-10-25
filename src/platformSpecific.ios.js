@@ -366,7 +366,7 @@ function showModal(params) {
     }
   });
   ControllerRegistry.registerController(controllerID, () => Controller);
-  Modal.showController(controllerID, params.orientation, params.animationType);
+  Modal.showController(controllerID, params.orientation, params.animationType, params.enableNotifications);
 }
 
 function dismissModal(params) {
