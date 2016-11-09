@@ -98,6 +98,16 @@ function navigatorSwitchToTab(navigator, params) {
     RctActivity.switchTabInPager(params.tabIndex);
 }
 
+function navigatorResetTo(navigator, params) {
+  if (!params.screen) {
+    console.error('Navigator.resetTo(params): params.screen is required');
+    return;
+  }
+
+  dismissAllModals({});
+  showModal(params);
+}
+
 function lockToPortrait() {
   return RctActivity.lockToPortrait();
 }
@@ -175,6 +185,7 @@ export default {
   dismissModal,
   dismissAllModals,
   navigatorSwitchToTab,
+  navigatorResetTo,
   lockToPortrait,
   lockToLandscape,
   lockToSensorLandscape,
