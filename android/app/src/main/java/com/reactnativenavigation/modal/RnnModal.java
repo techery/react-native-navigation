@@ -29,7 +29,6 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
 
     private ScreenStack mScreenStack;
     private Screen mScreen;
-    private Stack<Boolean> statusBarVisibilityStack = new Stack<>();
     private Stack<String> orientationStack = new Stack<>();
 
     public RnnModal(BaseReactActivity baseReactActivity, Screen screen) {
@@ -67,7 +66,6 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
 
     private void pushStatusBarScreen(Screen screen) {
         final boolean showStatusBar = !screen.hideStatusBar;
-        statusBarVisibilityStack.push(showStatusBar);
         changeStatusBarVisibility(showStatusBar);
     }
 
@@ -78,10 +76,6 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
     }
 
     public Screen pop() {
-        if (statusBarVisibilityStack.size() > 0) {
-            final boolean showStatusBar = statusBarVisibilityStack.pop();
-            changeStatusBarVisibility(showStatusBar);
-        }
         if (orientationStack.size() > 0) {
             final String orientation = orientationStack.pop();
             lockOrientation(orientation);
