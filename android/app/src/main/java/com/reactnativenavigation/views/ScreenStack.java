@@ -76,14 +76,14 @@ public class ScreenStack extends FrameLayout {
             return null;
         }
 
-        unmountView();
-
         ScreenView popped = mStack.pop();
+
         if (!mStack.isEmpty()) {
             addView(mStack.peek().view, 0);
         }
 
         ReflectionUtils.setBooleanField(popped.view.getReactRootView(), "mAttachScheduled", false);
+        popped.view.getReactRootView().unmountReactApplication();
         removeView(popped.view);
         return popped.screen;
     }
@@ -102,7 +102,15 @@ public class ScreenStack extends FrameLayout {
 
     public void unmountView() {
         if (!mStack.isEmpty()) {
-            mStack.peek().view.getReactRootView().unmountReactApplication();
+            for (ScreenView screenView : mStack) {
+                final ReactRootView reactRootView = screenView.view.getReactRootView();
+                reactRootView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        reactRootView.unmountReactApplication();
+                    }
+                });
+            }
         }
     }
 }
