@@ -6,6 +6,7 @@ import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.WritableMap;
 import com.reactnativenavigation.core.objects.Screen;
+import com.reactnativenavigation.utils.ContextProvider;
 
 import static com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter;
 
@@ -42,7 +43,9 @@ public class RctManager {
     }
 
     public boolean isInitialized() {
-        return reactInstanceManager != null && reactInstanceManager.getCurrentReactContext() != null;
+        return reactInstanceManager != null
+                && reactInstanceManager.getCurrentReactContext() != null
+                && ContextProvider.getActivityContext() != null;
     }
 
     public void sendEvent(String eventName, Screen screen, WritableMap params) {

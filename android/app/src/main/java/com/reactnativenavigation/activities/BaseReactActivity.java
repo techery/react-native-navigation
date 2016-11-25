@@ -44,7 +44,10 @@ public abstract class BaseReactActivity extends AppCompatActivity implements Def
         }
         super.onCreate(savedInstanceState);
         navigationHandler = new Handler(Looper.getMainLooper());
-        handleOnCreate();
+
+        if (savedInstanceState == null) {
+            handleOnCreate();
+        }
     }
 
     protected void handleOnCreate() {

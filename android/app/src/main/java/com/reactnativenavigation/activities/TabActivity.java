@@ -2,7 +2,6 @@ package com.reactnativenavigation.activities;
 
 import com.reactnativenavigation.R;
 import com.reactnativenavigation.adapters.ViewPagerAdapter;
-import com.reactnativenavigation.core.RctManager;
 import com.reactnativenavigation.core.objects.Screen;
 import com.reactnativenavigation.views.NonSwipeableViewPager;
 
@@ -22,6 +21,12 @@ public class TabActivity extends BaseReactActivity {
         ArrayList<Screen> screens = (ArrayList<Screen>) getIntent().getSerializableExtra(EXTRA_SCREENS);
 
         setupViewPager(screens);
+    }
+
+    @Override
+    protected void onDestroy() {
+        mAdapter.unmountViews();
+        super.onDestroy();
     }
 
     private void setupViewPager(ArrayList<Screen> screens) {

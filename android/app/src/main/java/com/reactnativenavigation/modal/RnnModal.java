@@ -132,10 +132,8 @@ public class RnnModal extends Dialog implements DialogInterface.OnDismissListene
         }
     }
 
-    @Override
-    public void onDetachedFromWindow() {
+    public void unmountViews() {
         mScreenStack.unmountView();
-        super.onDetachedFromWindow();
     }
 
     @Override

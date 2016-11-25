@@ -125,4 +125,12 @@ public class ViewPagerAdapter extends PagerAdapter implements TabLayout.OnTabSel
     public void onPageScrollStateChanged(int state) {
 
     }
+
+    public void unmountViews() {
+        if (mScreenStacks != null && !mScreenStacks.isEmpty()) {
+            for (ScreenStack screenStack : mScreenStacks) {
+                screenStack.unmountView();
+            }
+        }
+    }
 }
