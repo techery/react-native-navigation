@@ -54,6 +54,10 @@ public class TabActivity extends BaseReactActivity {
 
     @Override
     protected String getCurrentNavigatorId() {
+        if (mViewPager == null) {
+            return "unknownId";
+        }
+
         return mAdapter.getNavigatorId(mViewPager.getCurrentItem());
     }
 
