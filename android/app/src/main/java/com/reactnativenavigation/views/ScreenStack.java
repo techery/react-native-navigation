@@ -82,8 +82,14 @@ public class ScreenStack extends FrameLayout {
             addView(mStack.peek().view, 0);
         }
 
-        ReflectionUtils.setBooleanField(popped.view.getReactRootView(), "mAttachScheduled", false);
-        popped.view.getReactRootView().unmountReactApplication();
+        final ReactRootView reactRootView = popped.view.getReactRootView();
+        ReflectionUtils.setBooleanField(reactRootView, "mAttachScheduled", false);
+        reactRootView.post(new Runnable() {
+            @Override
+            public void run() {
+                reactRootView.unmountReactApplication();
+            }
+        });
         removeView(popped.view);
         return popped.screen;
     }
